@@ -98,7 +98,7 @@ func GetOneUserController(c echo.Context) error {
 				Message: "Error ketika input mendapatkan data user dalam database",
 				Data:    nil,
 			})
-		} 
+		}
 	}
 
 	return c.JSON(http.StatusOK, responses.BaseResponse{
@@ -108,7 +108,7 @@ func GetOneUserController(c echo.Context) error {
 	})
 }
 
-//UPDATE user , INI BELUM SELESAI
+//UPDATE user
 func UpdateUserController(c echo.Context) error {
 	userUpdate := users.UserUpdate{}
 	c.Bind(&userUpdate)
@@ -117,11 +117,11 @@ func UpdateUserController(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 	result := config.DB.First(&users, id)
 
-	users[id].Name = userUpdate.Name
-	users[id].Email = userUpdate.Email
-	users[id].Password = userUpdate.Password
-	users[id].Phone = userUpdate.Phone
-	users[id].Dob = userUpdate.Dob
+	users[0].Name = userUpdate.Name
+	users[0].Email = userUpdate.Email
+	users[0].Password = userUpdate.Password
+	users[0].Phone = userUpdate.Phone
+	users[0].Dob = userUpdate.Dob
 	config.DB.Save(&users)
 	//jangan lupa tambahin jika pencarian tidak ketemu
 
@@ -149,7 +149,6 @@ func DeleteUserController(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 	result := config.DB.Delete(&users, id)
 
-	
 	if result.Error != nil {
 		if result.Error != gorm.ErrRecordNotFound {
 			return c.JSON(http.StatusInternalServerError, responses.BaseResponse{
