@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"finalproject-BE/config"
+	"finalproject-BE/middlewares"
 	"finalproject-BE/models/responses"
 	"finalproject-BE/models/users"
 	"net/http"
@@ -61,6 +62,40 @@ func RegisterUserController(c echo.Context) error {
 	})
 }
 
+func LoginUserController(c echo.Context) error {
+	//blm tau dbkin struct baru lg atau pke struct user utk db aja
+	user := users.User{}
+	userLogin := users.UserLogin{}
+	c.Bind(&userLogin)
+
+	result := config.DB.Where("email = ? AND password = ?", userLogin.Email, userLogin.Password).First(&user)
+	if result.Error != nil {
+		return c.JSON(http.StatusInternalServerError, responses.BaseResponse{
+			Code:    http.StatusInternalServerError,
+			Message: "Gagal login",
+			Data:    nil,
+		})
+	}
+
+	token, err := middlewares.CreateToken(user.ID, user.Name)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, responses.BaseResponse{
+			Code:    http.StatusInternalServerError,
+			Message: "Gagal login",
+			Data:    nil,
+		})
+	}
+
+	userResponse := users.UserResponse{user.ID, user.Name, userLogin.Email, token}
+
+	return c.JSON(http.StatusOK, responses.BaseResponse{
+		Code:    http.StatusOK,
+		Message: "Berhasil login",
+		Data:    userResponse,
+	})
+
+}
+
 //READ user
 func GetAllUserController(c echo.Context) error {
 	users := []users.User{}
@@ -117,12 +152,6 @@ func UpdateUserController(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 	result := config.DB.First(&users, id)
 
-	users[0].Name = userUpdate.Name
-	users[0].Email = userUpdate.Email
-	users[0].Password = userUpdate.Password
-	users[0].Phone = userUpdate.Phone
-	users[0].Dob = userUpdate.Dob
-	config.DB.Save(&users)
 	//jangan lupa tambahin jika pencarian tidak ketemu
 
 	if result.Error != nil {
@@ -134,6 +163,13 @@ func UpdateUserController(c echo.Context) error {
 			})
 		}
 	}
+
+	users[0].Name = userUpdate.Name
+	users[0].Email = userUpdate.Email
+	users[0].Password = userUpdate.Password
+	users[0].Phone = userUpdate.Phone
+	users[0].Dob = userUpdate.Dob
+	config.DB.Save(&users)
 
 	return c.JSON(http.StatusOK, responses.BaseResponse{
 		Code:    http.StatusOK,

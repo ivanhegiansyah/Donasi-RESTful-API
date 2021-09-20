@@ -1,7 +1,9 @@
 package config
 
 import (
+	"finalproject-BE/models/donations"
 	"finalproject-BE/models/users"
+
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -21,4 +23,5 @@ func InitDB() {
 
 func InitMigration() {
 	DB.AutoMigrate(&users.User{})
+	DB.AutoMigrate(&donations.Donation{})
 }
