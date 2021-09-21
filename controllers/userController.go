@@ -11,6 +11,7 @@ import (
 	"strconv"
 
 	"github.com/labstack/echo/v4"
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
@@ -68,10 +69,16 @@ func LoginUserController(c echo.Context) error {
 	//blm tau dbkin struct baru lg atau pke struct user utk db aja
 	user := users.User{}
 	userLogin := users.UserLogin{}
+	hashPassword := users.HashPassword{}
 	c.Bind(&userLogin)
 
-	result := config.DB.Where("email = ? AND password = ?", userLogin.Email, userLogin.Password).First(&user)
-	if result.Error != nil {
+	
+
+	result := config.DB.Where("email = ?", userLogin.Email).First(&user)
+	config.DB.Raw("SELECT password FROM users WHERE email = ?", userLogin.Email).Scan(&hashPassword)
+	err := bcrypt.CompareHashAndPassword([]byte(hashPassword.Password), []byte(userLogin.Password))
+
+	if result.Error != nil || err != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return c.JSON(http.StatusForbidden, responses.BaseResponse{
 				Code:    http.StatusForbidden,
