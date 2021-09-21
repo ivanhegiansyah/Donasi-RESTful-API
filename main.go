@@ -1,14 +1,12 @@
 package main
 
 import (
-	"fmt"
+	"finalproject-BE/config"
+	"finalproject-BE/routes"
 )
 
 func main() {
-	fmt.Println("test 1")
-	fmt.Println("test 2")
-	fmt.Println("new test 3")
-	fmt.Println("new test 4")
-	fmt.Println("test 5")
-
+	config.InitDB()
+	e := routes.NewRoute()
+	e.Start(":8000")
 }
