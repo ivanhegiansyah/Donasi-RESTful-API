@@ -3,6 +3,7 @@ package controllers
 import (
 	"errors"
 	"finalproject-BE/config"
+	"finalproject-BE/helpers"
 	"finalproject-BE/middlewares"
 	"finalproject-BE/models/responses"
 	"finalproject-BE/models/users"
@@ -43,7 +44,7 @@ func RegisterUserController(c echo.Context) error {
 	userDB := users.User{}
 	userDB.Name = userRegister.Name
 	userDB.Email = userRegister.Email
-	userDB.Password = userRegister.Password
+	userDB.Password, _ = helpers.Hash(userRegister.Password)
 	userDB.Phone = userRegister.Phone
 	userDB.Dob = userRegister.Dob
 
