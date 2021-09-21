@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"errors"
 	"finalproject-BE/config"
 	"finalproject-BE/middlewares"
 	"finalproject-BE/models/responses"
@@ -70,11 +71,19 @@ func LoginUserController(c echo.Context) error {
 
 	result := config.DB.Where("email = ? AND password = ?", userLogin.Email, userLogin.Password).First(&user)
 	if result.Error != nil {
-		return c.JSON(http.StatusInternalServerError, responses.BaseResponse{
-			Code:    http.StatusInternalServerError,
-			Message: "Gagal login",
-			Data:    nil,
-		})
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return c.JSON(http.StatusForbidden, responses.BaseResponse{
+				Code:    http.StatusForbidden,
+				Message: "Email dan password salah",
+				Data:    nil,
+			})
+		} else {
+			return c.JSON(http.StatusInternalServerError, responses.BaseResponse{
+				Code:    http.StatusInternalServerError,
+				Message: "terjadi kesalahan",
+				Data:    nil,
+			})
+		}
 	}
 
 	token, err := middlewares.CreateToken(user.ID, user.Name)
