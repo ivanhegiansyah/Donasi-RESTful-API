@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"errors"
 	"finalproject-BE/config"
 	"finalproject-BE/models/donations"
 	"finalproject-BE/models/responses"
@@ -81,14 +82,12 @@ func GetAllDonationController(c echo.Context) error {
 	userId, _ := strconv.Atoi(c.Param("userid"))
 	result := config.DB.Where("user_id = ?", userId).Find(&donations)
 
-	if result.Error != nil {
-		if result.Error != gorm.ErrRecordNotFound {
-			return c.JSON(http.StatusInternalServerError, responses.BaseResponse{
-				Code:    http.StatusInternalServerError,
-				Message: "Error ketika input mendapatkan data penggalangan dana dalam database",
-				Data:    nil,
-			})
-		}
+	if result.RowsAffected == 0 {
+		return c.JSON(http.StatusInternalServerError, responses.BaseResponse{
+			Code:    http.StatusInternalServerError,
+			Message: "Error ketika input mendapatkan data penggalangan dana dalam database",
+			Data:    nil,
+		})		
 	}
 
 	return c.JSON(http.StatusOK, responses.BaseResponse{
@@ -109,7 +108,7 @@ func GetOneDonationController(c echo.Context) error {
 	//blm validasi id user
 
 	if result.Error != nil {
-		if result.Error != gorm.ErrRecordNotFound {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return c.JSON(http.StatusInternalServerError, responses.BaseResponse{
 				Code:    http.StatusInternalServerError,
 				Message: "Error ketika input mendapatkan data penggalangan dana dalam database",
@@ -136,7 +135,7 @@ func UpdateDonationController(c echo.Context) error {
 	result := config.DB.Where("user_id = ? AND id = ?", userId, donationId).First(&donations)
 
 	if result.Error != nil {
-		if result.Error != gorm.ErrRecordNotFound {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return c.JSON(http.StatusInternalServerError, responses.BaseResponse{
 				Code:    http.StatusInternalServerError,
 				Message: "Error ketika input memperbarui data penggalangan dana dalam database",
@@ -171,7 +170,7 @@ func DeleteDonationController(c echo.Context) error {
 	result := config.DB.Where("user_id = ? AND id = ?", userId, donationId).Delete(&donations)
 
 	if result.Error != nil {
-		if result.Error != gorm.ErrRecordNotFound {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return c.JSON(http.StatusInternalServerError, responses.BaseResponse{
 				Code:    http.StatusInternalServerError,
 				Message: "Error ketika input menghapus data penggalangan dana dalam database",

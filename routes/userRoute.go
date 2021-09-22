@@ -8,8 +8,8 @@ import (
 
 func UserRoute(g *echo.Group) {
 	g.GET("users", controllers.GetAllUserController) //blm tambahin query param
-	g.POST("users/register", controllers.RegisterUserController)
-	g.POST("users/login", controllers.LoginUserController)
+	g.GET("users/:id", controllers.GetOneUserController)
 	g.PUT("users/:id", controllers.UpdateUserController)
 	g.DELETE("users/:id", controllers.DeleteUserController)
+	
 }

@@ -120,7 +120,7 @@ func GetAllUserController(c echo.Context) error {
 	result := config.DB.Find(&users)
 
 	if result.Error != nil {
-		if result.Error != gorm.ErrRecordNotFound {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return c.JSON(http.StatusInternalServerError, responses.BaseResponse{
 				Code:    http.StatusInternalServerError,
 				Message: "Error ketika input mendapatkan data user dalam database",
@@ -144,7 +144,7 @@ func GetOneUserController(c echo.Context) error {
 	result := config.DB.First(&users, id)
 
 	if result.Error != nil {
-		if result.Error != gorm.ErrRecordNotFound {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return c.JSON(http.StatusInternalServerError, responses.BaseResponse{
 				Code:    http.StatusInternalServerError,
 				Message: "Error ketika input mendapatkan data user dalam database",
@@ -169,10 +169,8 @@ func UpdateUserController(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 	result := config.DB.First(&users, id)
 
-	//jangan lupa tambahin jika pencarian tidak ketemu
-
 	if result.Error != nil {
-		if result.Error != gorm.ErrRecordNotFound {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return c.JSON(http.StatusInternalServerError, responses.BaseResponse{
 				Code:    http.StatusInternalServerError,
 				Message: "Error ketika input memperbarui data user dalam database",
@@ -183,7 +181,7 @@ func UpdateUserController(c echo.Context) error {
 
 	users[0].Name = userUpdate.Name
 	users[0].Email = userUpdate.Email
-	users[0].Password = userUpdate.Password
+	users[0].Password, _ = helpers.Hash(userUpdate.Password)
 	users[0].Phone = userUpdate.Phone
 	users[0].Dob = userUpdate.Dob
 	config.DB.Save(&users)
@@ -203,14 +201,15 @@ func DeleteUserController(c echo.Context) error {
 	result := config.DB.Delete(&users, id)
 
 	if result.Error != nil {
-		if result.Error != gorm.ErrRecordNotFound {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return c.JSON(http.StatusInternalServerError, responses.BaseResponse{
 				Code:    http.StatusInternalServerError,
-				Message: "Error ketika input menghapus data userdalam database",
+				Message: "Error ketika input menghapus data user dalam database",
 				Data:    nil,
 			})
 		}
 	}
+	
 	return c.JSON(http.StatusOK, responses.BaseResponse{
 		Code:    http.StatusOK,
 		Message: "Berhasil menghapus data user",
