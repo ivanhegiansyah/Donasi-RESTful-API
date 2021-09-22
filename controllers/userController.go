@@ -94,7 +94,7 @@ func LoginUserController(c echo.Context) error {
 		}
 	}
 
-	token, err := middlewares.CreateToken(user.ID, user.Name)
+	token, err := middlewares.CreateToken(user.Id, user.Name)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, responses.BaseResponse{
 			Code:    http.StatusInternalServerError,
@@ -103,7 +103,7 @@ func LoginUserController(c echo.Context) error {
 		})
 	}
 
-	userResponse := users.UserResponse{user.ID, user.Name, userLogin.Email, token}
+	userResponse := users.UserResponse{user.Id, user.Name, userLogin.Email, token}
 
 	return c.JSON(http.StatusOK, responses.BaseResponse{
 		Code:    http.StatusOK,
