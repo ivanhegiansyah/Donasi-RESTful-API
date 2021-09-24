@@ -2,7 +2,6 @@ package users
 
 import (
 	"context"
-	"finalproject-BE/controllers/users/requests"
 	"time"
 )
 
@@ -19,11 +18,15 @@ type Domain struct {
 }
 
 type Usecase interface {
-	Register(ctx context.Context, userRequest requests.UserRegister) (Domain, error)
-	Login(ctx context.Context, email string, password string) (Domain, error)
+	Register(ctx context.Context, domain Domain) (Domain, error)
+	Login(ctx context.Context, domain Domain) (Domain, error)
+	GetAllUser(ctx context.Context) ([]Domain, error)
+	GetDetailUser(ctx context.Context, id int) ([]Domain, error)
 }
 
 type Repository interface {
-	Register(ctx context.Context, userRequest requests.UserRegister) (Domain, error)
-	Login(ctx context.Context, email string, password string) (Domain, error)
+	Register(ctx context.Context, domain Domain) (Domain, error)
+	Login(ctx context.Context, domain Domain) (Domain, error)
+	GetAllUser(ctx context.Context) ([]Domain, error)
+	GetDetailUser(ctx context.Context, id int) ([]Domain, error)
 }

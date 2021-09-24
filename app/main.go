@@ -5,12 +5,16 @@ import (
 	_userUsecase "finalproject-BE/business/users"
 	_userController "finalproject-BE/controllers/users"
 	_userdb "finalproject-BE/drivers/databases/users"
+	_userRepository "finalproject-BE/drivers/databases/users"
+
+	_donationUsecase "finalproject-BE/business/donations"
+	_donationController "finalproject-BE/controllers/donations"
+	_donationdb "finalproject-BE/drivers/databases/donations"
+	_donationRepository "finalproject-BE/drivers/databases/donations"
+	
 	_mysqlDriver "finalproject-BE/drivers/mysql"
 	"time"
-
-	_userRepository "finalproject-BE/drivers/databases/users"
 	"log"
-
 	"github.com/labstack/echo/v4"
 	"github.com/spf13/viper"
 	"gorm.io/gorm"
@@ -29,6 +33,7 @@ func init() {
 
 func DbMigrate(db *gorm.DB) {
 	db.AutoMigrate(&_userdb.Users{})
+	db.AutoMigrate(&_donationdb.Donations{})
 
 }
 
@@ -52,10 +57,16 @@ func main() {
 	userUseCase := _userUsecase.NewUserUsecase(userRepository, timeoutContext)
 	userController := _userController.NewUserController(userUseCase)
 
+	donationRepository := _donationRepository.NewMysqlDonationRepository(Conn)
+	donationUseCase := _donationUsecase.NewDonationUsecase(donationRepository, timeoutContext)
+	donationController := _donationController.NewDonationController(donationUseCase)
+
 	routesInit := routes.ControllerList{
 		UserController: *userController,
+		DonationController: *donationController,
 	}
 
-	routesInit.RouteRegister(e)
+	routesInit.RouteUser(e)
+	routesInit.RouteDonation(e)
 	log.Fatal(e.Start(viper.GetString("server.address")))
 }

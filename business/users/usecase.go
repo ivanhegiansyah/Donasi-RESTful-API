@@ -3,7 +3,7 @@ package users
 import (
 	"context"
 	"errors"
-	"finalproject-BE/controllers/users/requests"
+	"finalproject-BE/helpers/encrypt"
 	"time"
 )
 
@@ -20,16 +20,16 @@ func NewUserUsecase(repo Repository, timeout time.Duration) Usecase {
 }
 
 //core bisnis login
-func (uc *UserUsecase) Login(ctx context.Context, email string, password string) (Domain, error) {
-	if email == "" {
+func (uc *UserUsecase) Login(ctx context.Context, domain Domain) (Domain, error) {
+	if domain.Email == "" {
 		return Domain{}, errors.New("Email empty")
 	}
 
-	if password == "" {
+	if domain.Password == "" {
 		return Domain{}, errors.New("Password empty")
 	}
 
-	user, err := uc.Repo.Login(ctx, email, password)
+	user, err := uc.Repo.Login(ctx, domain)
 
 	if err != nil {
 		return Domain{}, err
@@ -38,21 +38,48 @@ func (uc *UserUsecase) Login(ctx context.Context, email string, password string)
 	return user, nil
 }
 
-//core bisnis register
-func (uc *UserUsecase) Register(ctx context.Context, userRegister requests.UserRegister) (Domain, error) {
-	if userRegister.Name == "" {
+// core bisnis register
+func (uc *UserUsecase) Register(ctx context.Context, domain Domain) (Domain, error) {
+	if domain.Name == "" {
 		return Domain{}, errors.New("Name empty")
 	}
-	if userRegister.Email == "" {
+	if domain.Email == "" {
 		return Domain{}, errors.New("Email empty")
 	}
-	if userRegister.Password == "" {
+	if domain.Password == "" {
 		return Domain{}, errors.New("Password empty")
 	}
-	user, err := uc.Repo.Register(ctx, userRegister)
+
+	var err error
+	domain.Password, err = encrypt.Hash(domain.Password)
 
 	if err != nil {
 		return Domain{}, err
+	}
+
+	user, err := uc.Repo.Register(ctx, domain)
+
+	if err != nil {
+		return Domain{}, err
+	}
+	return user, nil
+}
+
+//core bisnis Read
+func (uc *UserUsecase) GetAllUser(ctx context.Context) ([]Domain, error) {
+	user, err := uc.Repo.GetAllUser(ctx)
+
+	if err != nil {
+		return []Domain{}, err
+	}
+	return user, nil
+}
+
+func (uc *UserUsecase) GetDetailUser(ctx context.Context, id int) ([]Domain, error) {
+	user, err := uc.Repo.GetDetailUser(ctx, id)
+
+	if err != nil {
+		return []Domain{}, err
 	}
 	return user, nil
 }

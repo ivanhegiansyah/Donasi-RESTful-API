@@ -2,6 +2,7 @@ package users
 
 import (
 	"finalproject-BE/business/users"
+	_"finalproject-BE/drivers/databases/donations"
 	"time"
 
 	"gorm.io/gorm"
@@ -17,6 +18,8 @@ type Users struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt gorm.DeletedAt `gorm:"index"`
+	// Donations []donations.Donations `gorm:"foreignKey:UserId"`
+	
 }
 
 func (user *Users) ToDomain() users.Domain {
@@ -43,4 +46,13 @@ func FromDomain(domain users.Domain) Users {
 		CreatedAt: domain.CreatedAt,
 		UpdatedAt: domain.UpdatedAt,
 	}
+}
+
+func ToListDomain(data []Users) []users.Domain {
+	result := []users.Domain{}
+
+	for _, user := range data {
+		result = append(result, user.ToDomain())
+	}
+	return result
 }

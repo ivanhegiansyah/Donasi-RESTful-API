@@ -7,6 +7,7 @@ import (
 	"finalproject-BE/controllers/users/responses"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
@@ -27,7 +28,7 @@ func (userController UserController) Login(c echo.Context) error {
 	c.Bind(&userLogin)
 
 	ctx := c.Request().Context()
-	user, error := userController.UserUseCase.Login(ctx, userLogin.Email, userLogin.Password)
+	user, error := userController.UserUseCase.Login(ctx, userLogin.ToDomainLogin())
 
 	if error != nil {
 		return controllers.NewErrorResponse(c, http.StatusInternalServerError, error)
@@ -36,18 +37,42 @@ func (userController UserController) Login(c echo.Context) error {
 	return controllers.NewSuccesResponse(c, responses.FromDomain(user))
 }
 
-func (UserController UserController) Register(c echo.Context) error {
+func (userController UserController) Register(c echo.Context) error {
 	fmt.Println("Register")
 	userRegister := requests.UserRegister{}
 	c.Bind(&userRegister)
 
 	ctx := c.Request().Context()
-	user, error := UserController.UserUseCase.Register(ctx, userRegister)
+	user, error := userController.UserUseCase.Register(ctx, userRegister.ToDomainRegister())
 
 	if error != nil {
 		return controllers.NewErrorResponse(c, http.StatusInternalServerError, error)
 	}
 
 	return controllers.NewSuccesResponse(c, responses.FromDomain(user))
+}
 
+func (userController UserController) GetAllUser(c echo.Context) error {
+	fmt.Println("GetAll")
+	ctx := c.Request().Context()
+	user, error := userController.UserUseCase.GetAllUser(ctx)
+
+	if error != nil {
+		return controllers.NewErrorResponse(c, http.StatusInternalServerError, error)
+	}
+
+	return controllers.NewSuccesResponse(c, user)
+}
+
+func (userController UserController) GetDetailUser(c echo.Context) error {
+	fmt.Println("GetDetail")
+	ctx := c.Request().Context()
+	id, _ := strconv.Atoi(c.Param("id"))
+	user, error := userController.UserUseCase.GetDetailUser(ctx, id)
+
+	if error != nil {
+		return controllers.NewErrorResponse(c, http.StatusInternalServerError, error)
+	}
+
+	return controllers.NewSuccesResponse(c, user)
 }
