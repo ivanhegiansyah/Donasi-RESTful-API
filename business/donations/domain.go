@@ -8,6 +8,8 @@ import (
 type Domain struct {
 	Id               int
 	UserId           int
+	DonationDetailId int
+	DonationTypeId   int
 	DonationName     string
 	Status           string
 	ShortDescription string
@@ -29,4 +31,3 @@ type Repository interface {
 	GetAllDonation(ctx context.Context) ([]Domain, error)
 	GetDetailDonation(ctx context.Context, id int) ([]Domain, error)
 }
-

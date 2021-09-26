@@ -31,7 +31,6 @@ func (uc *DonationUsecase) AddDonation(ctx context.Context, domain Domain) (Doma
 	}
 	
 	donation, err := uc.Repo.AddDonation(ctx, domain)
-
 	if err != nil {
 		return Domain{}, err
 	}

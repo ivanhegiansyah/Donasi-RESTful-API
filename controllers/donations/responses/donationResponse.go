@@ -8,6 +8,8 @@ import (
 type DonationResponse struct {
 	Id               int       `json:"id"`
 	UserId           int       `json:"userId"`
+	DonationDetailId int       `json:"donationDetailId"`
+	DonationTypeId   int       `json:"donationTypeId"`
 	DonationName     string    `json:"donationName"`
 	Status           string    `json:"status"`
 	ShortDescription string    `json:"shortDescription"`
@@ -22,6 +24,8 @@ func FromDomain(domain donations.Domain) DonationResponse {
 	return DonationResponse{
 		Id:               domain.Id,
 		UserId:           domain.UserId,
+		DonationDetailId: domain.DonationDetailId,
+		DonationTypeId:   domain.DonationTypeId,
 		DonationName:     domain.DonationName,
 		Status:           domain.Status,
 		ShortDescription: domain.ShortDescription,

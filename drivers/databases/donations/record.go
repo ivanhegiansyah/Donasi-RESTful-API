@@ -9,7 +9,9 @@ import (
 
 type Donations struct {
 	Id               int `gorm:"primaryKey"`
-	UserId           int 
+	UserId           int
+	DonationDetailId int
+	DonationTypeId   int
 	DonationName     string
 	Status           string
 	ShortDescription string
@@ -25,6 +27,8 @@ func (donation *Donations) ToDomain() donations.Domain {
 	return donations.Domain{
 		Id:               donation.Id,
 		UserId:           donation.UserId,
+		DonationDetailId: donation.DonationDetailId,
+		DonationTypeId:   donation.DonationTypeId,
 		DonationName:     donation.DonationName,
 		Status:           donation.Status,
 		ShortDescription: donation.ShortDescription,
@@ -40,6 +44,8 @@ func FromDomain(domain donations.Domain) Donations {
 	return Donations{
 		Id:               domain.Id,
 		UserId:           domain.UserId,
+		DonationDetailId: domain.DonationDetailId,
+		DonationTypeId:   domain.DonationTypeId,
 		DonationName:     domain.DonationName,
 		Status:           "Active",
 		ShortDescription: domain.ShortDescription,

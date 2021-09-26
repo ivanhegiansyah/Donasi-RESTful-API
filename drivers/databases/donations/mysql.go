@@ -20,12 +20,7 @@ func NewMysqlDonationRepository(conn *gorm.DB) donations.Repository {
 func (rep *MysqlDonationRepository) AddDonation(ctx context.Context, domain donations.Domain) (donations.Domain, error) {
 	var donation Donations
 	
-	donation.DonationName = domain.DonationName
-	donation.Status = domain.Status
-	donation.ShortDescription = domain.ShortDescription
-	donation.GoalAmount = domain.GoalAmount
-	donation.CurrentAmount = domain.CurrentAmount
-	donation.ExpiredDate = domain.ExpiredDate
+	donation = FromDomain(domain)
 
 	result := rep.Conn.Create(&donation)
 

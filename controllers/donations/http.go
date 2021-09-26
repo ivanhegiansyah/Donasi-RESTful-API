@@ -26,7 +26,6 @@ func (donationController DonationController) AddDonation(c echo.Context) error {
 	fmt.Println("Add")
 	donationAdd := requests.DonationAdd{}
 	c.Bind(&donationAdd)
-
 	ctx := c.Request().Context()
 	donation, error := donationController.DonationUseCase.AddDonation(ctx, donationAdd.ToDomainAdd())
 	if error != nil {

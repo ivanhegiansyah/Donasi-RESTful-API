@@ -13,9 +13,9 @@ type DonationAdd struct {
 func (donation *DonationAdd) ToDomainAdd() donations.Domain {
 	return donations.Domain{
 		DonationName:     donation.DonationName,
-		Status:    donation.Status,
+		Status:           donation.Status,
 		ShortDescription: donation.ShortDescription,
-		GoalAmount:    donation.GoalAmount,
+		GoalAmount:       donation.GoalAmount,
 		ExpiredDate:      donation.ExpiredDate,
 	}
 }

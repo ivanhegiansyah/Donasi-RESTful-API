@@ -1,6 +1,7 @@
 package users
 
 import (
+	"context"
 	"finalproject-BE/business/users"
 	"finalproject-BE/controllers"
 	"finalproject-BE/controllers/users/requests"
@@ -75,4 +76,13 @@ func (userController UserController) GetDetailUser(c echo.Context) error {
 	}
 
 	return controllers.NewSuccesResponse(c, user)
+}
+
+func (userController *UserController) UserRole(id int) string {
+	role := "NewsAnchor"
+	user, err := userController.UserUseCase.GetDetailUser(context.Background(), id)
+	if err == nil {
+		role = user.Name
+	}
+	return role
 }

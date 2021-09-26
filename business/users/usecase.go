@@ -3,6 +3,7 @@ package users
 import (
 	"context"
 	"errors"
+	"finalproject-BE/app/middlewares"
 	"finalproject-BE/helpers/encrypt"
 	"time"
 )
@@ -10,17 +11,22 @@ import (
 type UserUsecase struct {
 	Repo           Repository
 	contextTimeout time.Duration
+	jwtAuth        *middlewares.ConfigJWT
 }
 
-func NewUserUsecase(repo Repository, timeout time.Duration) Usecase {
+func NewUserUsecase(repo Repository, timeout time.Duration, jwtauth *middlewares.ConfigJWT) Usecase {
 	return &UserUsecase{
 		Repo:           repo,
 		contextTimeout: timeout,
+		jwtAuth:        jwtauth,
 	}
 }
 
 //core bisnis login
 func (uc *UserUsecase) Login(ctx context.Context, domain Domain) (Domain, error) {
+	ctx, cancel := context.WithTimeout(ctx, uc.contextTimeout)
+	defer cancel()
+
 	if domain.Email == "" {
 		return Domain{}, errors.New("Email empty")
 	}
@@ -30,16 +36,27 @@ func (uc *UserUsecase) Login(ctx context.Context, domain Domain) (Domain, error)
 	}
 
 	user, err := uc.Repo.Login(ctx, domain)
+	temp := encrypt.ValidateHash(domain.Password, user.Password)
+
+
+	if temp != true {
+		return Domain{}, errors.New("Password salah")
+	}
 
 	if err != nil {
 		return Domain{}, err
 	}
+
+	user.Token = uc.jwtAuth.GenerateToken(domain.Id)
 
 	return user, nil
 }
 
 // core bisnis register
 func (uc *UserUsecase) Register(ctx context.Context, domain Domain) (Domain, error) {
+	ctx, cancel := context.WithTimeout(ctx, uc.contextTimeout)
+	defer cancel()
+
 	if domain.Name == "" {
 		return Domain{}, errors.New("Name empty")
 	}
@@ -75,11 +92,12 @@ func (uc *UserUsecase) GetAllUser(ctx context.Context) ([]Domain, error) {
 	return user, nil
 }
 
-func (uc *UserUsecase) GetDetailUser(ctx context.Context, id int) ([]Domain, error) {
+func (uc *UserUsecase) GetDetailUser(ctx context.Context, id int) (Domain, error) {
 	user, err := uc.Repo.GetDetailUser(ctx, id)
 
 	if err != nil {
-		return []Domain{}, err
+		return Domain{}, err
 	}
 	return user, nil
 }
+

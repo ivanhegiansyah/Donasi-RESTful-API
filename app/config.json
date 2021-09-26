@@ -11,10 +11,10 @@
         "port": "3306",
         "user": "root",
         "pass": "ivan112233",
-        "name": "donasi"
+        "name": "donasidb"
     },
     "jwt" : {
       "secret" : "legal",
-      "expired" : 72
+      "expired" : 1
     }
   }
