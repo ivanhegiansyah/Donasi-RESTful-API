@@ -3,22 +3,24 @@ package users
 import (
 	"finalproject-BE/business/users"
 	"finalproject-BE/drivers/databases/donations"
+	"finalproject-BE/drivers/databases/transactions"
 	"time"
 
 	"gorm.io/gorm"
 )
 
 type Users struct {
-	Id        int `gorm:"primaryKey"`
-	Name      string
-	Email     string `gorm:"unique"`
-	Password  string
-	Phone     string
-	Dob       string
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt gorm.DeletedAt        `gorm:"index"`
-	Donation  []donations.Donations `gorm:"foreignKey:UserId;references:Id"`
+	Id          int `gorm:"primaryKey"`
+	Name        string
+	Email       string `gorm:"unique"`
+	Password    string
+	Phone       string
+	Dob         string
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+	DeletedAt   gorm.DeletedAt              `gorm:"index"`
+	Donation    []donations.Donations       `gorm:"foreignKey:UserId;references:Id"`
+	Transaction []transactions.Transactions `gorm:"foreignKey:UserId;references:Id"`
 }
 
 func (user *Users) ToDomain() users.Domain {

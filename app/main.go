@@ -22,6 +22,11 @@ import (
 	_donationTypeRepository "finalproject-BE/drivers/databases/donationTypes"
 	_donationtypedb "finalproject-BE/drivers/databases/donationTypes"
 
+	_transactionUsecase "finalproject-BE/business/transactions"
+	_transactionController "finalproject-BE/controllers/transactions"
+	_transactionRepository "finalproject-BE/drivers/databases/transactions"
+	_transactiondb "finalproject-BE/drivers/databases/transactions"
+
 	_route "finalproject-BE/app/routes"
 	_middleware "finalproject-BE/app/middlewares"
 	_mysqlDriver "finalproject-BE/drivers/mysql"
@@ -50,7 +55,7 @@ func DbMigrate(db *gorm.DB) {
 	db.AutoMigrate(&_donationdetaildb.DonationDetails{})
 	db.AutoMigrate(&_donationtypedb.DonationTypes{})
 	db.AutoMigrate(&_donationdb.Donations{})
-	
+	db.AutoMigrate(&_transactiondb.Transactions{})
 
 }
 
@@ -91,17 +96,23 @@ func main() {
 	donationTypeUseCase := _donationTypeUsecase.NewDonationTypeUsecase(donationTypeRepository, timeoutContext)
 	donationTypeController := _donationTypeController.NewDonationTypeController(donationTypeUseCase)
 
+	transactionRepository := _transactionRepository.NewMysqlTransactionRepository(Conn)
+	transactionUseCase := _transactionUsecase.NewTransactionUsecase(transactionRepository, timeoutContext)
+	transactionController := _transactionController.NewTransactionController(transactionUseCase)
+
 	routesInit := _route.ControllerList{
 		JWTMiddleware:      configJWT.Init(),
 		UserController:           *userController,
 		DonationController:       *donationController,
 		DonationDetailController: *donationDetailController,
 		DonationTypeController:   *donationTypeController,
+		TransactionController: *transactionController,
 	}
 
 	routesInit.RouteUser(e)
 	routesInit.RouteDonation(e)
 	routesInit.RouteDonationDetail(e)
 	routesInit.RouteDonationType(e)
+	routesInit.RouteTransaction(e)
 	log.Fatal(e.Start(viper.GetString("server.address")))
 }

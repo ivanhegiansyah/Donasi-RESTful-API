@@ -2,7 +2,6 @@ package donationdetails
 
 import (
 	donationdetails "finalproject-BE/business/donationDetails"
-	"finalproject-BE/drivers/databases/donations"
 	"time"
 
 	"gorm.io/gorm"
@@ -10,16 +9,17 @@ import (
 
 type DonationDetails struct {
 	Id          int `gorm:"primaryKey"`
+	DonationId  int
 	Description string
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 	DeletedAt   gorm.DeletedAt      `gorm:"index"`
-	Donation    donations.Donations `gorm:"foreignKey:DonationDetailId;references:Id"`
 }
 
 func (donationDetail *DonationDetails) ToDomain() donationdetails.Domain {
 	return donationdetails.Domain{
 		Id:          donationDetail.Id,
+		DonationId: donationDetail.DonationId,
 		Description: donationDetail.Description,
 		CreatedAt:   donationDetail.CreatedAt,
 		UpdatedAt:   donationDetail.UpdatedAt,
@@ -29,6 +29,7 @@ func (donationDetail *DonationDetails) ToDomain() donationdetails.Domain {
 func FromDomain(domain donationdetails.Domain) DonationDetails {
 	return DonationDetails{
 		Id:          domain.Id,
+		DonationId: domain.DonationId,
 		Description: domain.Description,
 		CreatedAt:   domain.CreatedAt,
 		UpdatedAt:   domain.UpdatedAt,

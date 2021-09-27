@@ -6,10 +6,11 @@ import (
 )
 
 type Domain struct {
-	Id               int
+	Id          int
+	DonationId  int
 	Description string
-	CreatedAt        time.Time
-	UpdatedAt        time.Time
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 }
 
 type Usecase interface {

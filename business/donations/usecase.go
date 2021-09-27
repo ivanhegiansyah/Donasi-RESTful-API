@@ -49,7 +49,6 @@ func (uc *DonationUsecase) GetAllDonation(ctx context.Context) ([]Domain, error)
 
 func (uc *DonationUsecase) GetDetailDonation(ctx context.Context, id int) ([]Domain, error) {
 	donation, err := uc.Repo.GetDetailDonation(ctx, id)
-
 	if err != nil {
 		return []Domain{}, err
 	}

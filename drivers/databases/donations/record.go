@@ -2,6 +2,8 @@ package donations
 
 import (
 	"finalproject-BE/business/donations"
+	donationdetails "finalproject-BE/drivers/databases/donationDetails"
+	"finalproject-BE/drivers/databases/transactions"
 	"time"
 
 	"gorm.io/gorm"
@@ -10,7 +12,6 @@ import (
 type Donations struct {
 	Id               int `gorm:"primaryKey"`
 	UserId           int
-	DonationDetailId int
 	DonationTypeId   int
 	DonationName     string
 	Status           string
@@ -20,14 +21,15 @@ type Donations struct {
 	ExpiredDate      string
 	CreatedAt        time.Time
 	UpdatedAt        time.Time
-	DeletedAt        gorm.DeletedAt `gorm:"index"`
+	DeletedAt        gorm.DeletedAt                  `gorm:"index"`
+	DonationDetails  donationdetails.DonationDetails `gorm:"foreignKey:DonationId;references:Id"`
+	Transactions     []transactions.Transactions     `gorm:"many2many:donations_transactions;"`
 }
 
 func (donation *Donations) ToDomain() donations.Domain {
 	return donations.Domain{
 		Id:               donation.Id,
 		UserId:           donation.UserId,
-		DonationDetailId: donation.DonationDetailId,
 		DonationTypeId:   donation.DonationTypeId,
 		DonationName:     donation.DonationName,
 		Status:           donation.Status,
@@ -44,7 +46,6 @@ func FromDomain(domain donations.Domain) Donations {
 	return Donations{
 		Id:               domain.Id,
 		UserId:           domain.UserId,
-		DonationDetailId: domain.DonationDetailId,
 		DonationTypeId:   domain.DonationTypeId,
 		DonationName:     domain.DonationName,
 		Status:           "Active",
@@ -59,7 +60,6 @@ func FromDomain(domain donations.Domain) Donations {
 
 func ToListDomain(data []Donations) []donations.Domain {
 	result := []donations.Domain{}
-
 	for _, domain := range data {
 		result = append(result, domain.ToDomain())
 	}

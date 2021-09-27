@@ -32,21 +32,23 @@ func (rep *MysqlDonationRepository) AddDonation(ctx context.Context, domain dona
 }
 
 func (rep *MysqlDonationRepository) GetAllDonation(ctx context.Context) ([]donations.Domain, error) {
-	var user []Donations
+	var donation []Donations
 
-	result := rep.Conn.Find(&user)
+	result := rep.Conn.Find(&donation)
 
 	if result.Error != nil {
 		return []donations.Domain{}, result.Error
 	}
 
-	return ToListDomain(user), nil
+	return ToListDomain(donation), nil
 }
 
 func (rep *MysqlDonationRepository) GetDetailDonation(ctx context.Context, id int) ([]donations.Domain, error) {
 	var donation []Donations
 
 	result := rep.Conn.First(&donation, id)
+	
+	
 
 	if result.Error != nil {
 		return []donations.Domain{}, result.Error

@@ -8,7 +8,6 @@ import (
 type Domain struct {
 	Id               int
 	UserId           int
-	DonationDetailId int
 	DonationTypeId   int
 	DonationName     string
 	Status           string

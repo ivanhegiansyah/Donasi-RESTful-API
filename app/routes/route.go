@@ -7,8 +7,8 @@ import (
 	donationdetails "finalproject-BE/controllers/donationDetails"
 	donationtypes "finalproject-BE/controllers/donationTypes"
 	"finalproject-BE/controllers/donations"
+	"finalproject-BE/controllers/transactions"
 	"finalproject-BE/controllers/users"
-	"fmt"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -16,11 +16,12 @@ import (
 )
 
 type ControllerList struct {
-	JWTMiddleware      middleware.JWTConfig
+	JWTMiddleware            middleware.JWTConfig
 	UserController           users.UserController
 	DonationController       donations.DonationController
 	DonationDetailController donationdetails.DonationDetailController
 	DonationTypeController   donationtypes.DonationTypeController
+	TransactionController    transactions.TransactionController
 }
 
 func (cl *ControllerList) RouteUser(e *echo.Echo) {
@@ -45,6 +46,10 @@ func (cl *ControllerList) RouteDonationType(e *echo.Echo) {
 	e.POST("/api/v1/donations/:id/add-type", cl.DonationTypeController.AddDonationType, middleware.JWTWithConfig(cl.JWTMiddleware), RoleValidation("NewsAnchor", cl.UserController))
 }
 
+func (cl *ControllerList) RouteTransaction(e *echo.Echo) {
+	e.POST("/api/v1/transactions/add-transaction", cl.TransactionController.AddTransaction, middleware.JWTWithConfig(cl.JWTMiddleware), RoleValidation("NewsAnchor", cl.UserController))
+	e.GET("/api/v1/transactions", cl.TransactionController.GetAllTransaction, middleware.JWTWithConfig(cl.JWTMiddleware))
+}
 
 //role validation
 func RoleValidation(role string, userControler users.UserController) echo.MiddlewareFunc {
@@ -53,8 +58,6 @@ func RoleValidation(role string, userControler users.UserController) echo.Middle
 			claims := middlewares.GetUser(c)
 
 			userRole := userControler.UserRole(claims.Id)
-			fmt.Println(userRole)
-			fmt.Println(role)
 			if userRole == role {
 				return hf(c)
 			} else {
