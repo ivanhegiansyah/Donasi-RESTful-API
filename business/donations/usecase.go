@@ -47,10 +47,42 @@ func (uc *DonationUsecase) GetAllDonation(ctx context.Context) ([]Domain, error)
 	return donation, nil
 }
 
-func (uc *DonationUsecase) GetDetailDonation(ctx context.Context, id int) ([]Domain, error) {
+func (uc *DonationUsecase) GetDetailDonation(ctx context.Context, id int) (Domain, error) {
 	donation, err := uc.Repo.GetDetailDonation(ctx, id)
 	if err != nil {
-		return []Domain{}, err
+		return Domain{}, err
 	}
 	return donation, nil
+}
+
+func (uc *DonationUsecase) UpdateDonation(ctx context.Context, domain Domain, id int) (Domain, error) {
+	ctx, cancel := context.WithTimeout(ctx, uc.contextTimeout)
+	defer cancel()
+
+	if domain.DonationName == "" {
+		return Domain{}, errors.New("Name empty")
+	}
+	if domain.ShortDescription == "" {
+		return Domain{}, errors.New("Short Description empty")
+	}
+	if domain.GoalAmount == 0 {
+		return Domain{}, errors.New("Goal amount empty")
+	}
+
+	domain.Id = id
+
+	donation, err := uc.Repo.UpdateDonation(ctx, domain)
+
+	if err != nil {
+		return Domain{}, err
+	}
+	return donation, nil
+}
+
+func (uc *DonationUsecase) DeleteDonation(ctx context.Context, id int) error {
+	err := uc.Repo.DeletDonation(ctx, id)
+	if err != nil {
+		return err
+	}
+	return nil
 }

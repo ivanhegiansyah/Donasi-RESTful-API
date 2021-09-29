@@ -23,6 +23,7 @@ func (uc *DonationDetailUsecase) AddDonationDetail(ctx context.Context, domain D
 		return Domain{}, errors.New("Description empty")
 	}
 	
+	domain.DonationId = id
 	donationDetail, err := uc.Repo.AddDonationDetail(ctx, domain, id)
 
 	if err != nil {

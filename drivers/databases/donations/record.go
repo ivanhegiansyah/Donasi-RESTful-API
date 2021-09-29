@@ -3,7 +3,6 @@ package donations
 import (
 	"finalproject-BE/business/donations"
 	donationdetails "finalproject-BE/drivers/databases/donationDetails"
-	"finalproject-BE/drivers/databases/transactions"
 	"time"
 
 	"gorm.io/gorm"
@@ -23,8 +22,9 @@ type Donations struct {
 	UpdatedAt        time.Time
 	DeletedAt        gorm.DeletedAt                  `gorm:"index"`
 	DonationDetails  donationdetails.DonationDetails `gorm:"foreignKey:DonationId;references:Id"`
-	Transactions     []transactions.Transactions     `gorm:"many2many:donations_transactions;"`
 }
+
+//tambahkan Donationtype
 
 func (donation *Donations) ToDomain() donations.Domain {
 	return donations.Domain{
@@ -39,6 +39,7 @@ func (donation *Donations) ToDomain() donations.Domain {
 		ExpiredDate:      donation.ExpiredDate,
 		CreatedAt:        donation.CreatedAt,
 		UpdatedAt:        donation.UpdatedAt,
+		DonationDetail:   donation.DonationDetails,
 	}
 }
 

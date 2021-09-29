@@ -2,6 +2,7 @@ package transactions
 
 import (
 	"finalproject-BE/business/transactions"
+	"finalproject-BE/drivers/databases/donations"
 	"time"
 
 	"gorm.io/gorm"
@@ -16,7 +17,8 @@ type Transactions struct {
 	Status          string
 	CreatedAt       time.Time
 	UpdatedAt       time.Time
-	DeletedAt       gorm.DeletedAt `gorm:"index"`
+	DeletedAt       gorm.DeletedAt        `gorm:"index"`
+	Donations       []donations.Donations `gorm:"many2many:transactions_donations;"`
 }
 
 func (transaction *Transactions) ToDomain() transactions.Domain {

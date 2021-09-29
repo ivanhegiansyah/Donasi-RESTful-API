@@ -9,17 +9,17 @@ import (
 
 type DonationDetails struct {
 	Id          int `gorm:"primaryKey"`
-	DonationId  int
+	DonationId  int `gorm:"unique"`
 	Description string
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
-	DeletedAt   gorm.DeletedAt      `gorm:"index"`
+	DeletedAt   gorm.DeletedAt `gorm:"index"`
 }
 
 func (donationDetail *DonationDetails) ToDomain() donationdetails.Domain {
 	return donationdetails.Domain{
 		Id:          donationDetail.Id,
-		DonationId: donationDetail.DonationId,
+		DonationId:  donationDetail.DonationId,
 		Description: donationDetail.Description,
 		CreatedAt:   donationDetail.CreatedAt,
 		UpdatedAt:   donationDetail.UpdatedAt,
@@ -29,7 +29,7 @@ func (donationDetail *DonationDetails) ToDomain() donationdetails.Domain {
 func FromDomain(domain donationdetails.Domain) DonationDetails {
 	return DonationDetails{
 		Id:          domain.Id,
-		DonationId: domain.DonationId,
+		DonationId:  domain.DonationId,
 		Description: domain.Description,
 		CreatedAt:   domain.CreatedAt,
 		UpdatedAt:   domain.UpdatedAt,

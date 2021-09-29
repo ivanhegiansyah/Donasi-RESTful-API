@@ -45,7 +45,7 @@ func (donationController DonationController) GetAllDonation(c echo.Context) erro
 		return controllers.NewErrorResponse(c, http.StatusInternalServerError, error)
 	}
 
-	return controllers.NewSuccesResponse(c, donation)
+	return controllers.NewSuccesResponse(c, responses.FromDonationListDomain(donation))
 }
 
 func (donationController DonationController) GetDetailDonation(c echo.Context) error {
@@ -58,6 +58,38 @@ func (donationController DonationController) GetDetailDonation(c echo.Context) e
 		return controllers.NewErrorResponse(c, http.StatusInternalServerError, error)
 	}
 
-	return controllers.NewSuccesResponse(c, donation)
+	return controllers.NewSuccesResponse(c, responses.FromDomainDetail(donation))
+}
+
+func (donationController DonationController) Updatedonation(c echo.Context) error {
+	fmt.Println("Update")
+	ctx := c.Request().Context()
+	id, _ := strconv.Atoi(c.Param("id"))
+
+	donationUpdate := requests.DonationAdd{}
+	c.Bind(&donationUpdate)
+
+	donation, error := donationController.DonationUseCase.UpdateDonation(ctx, donationUpdate.ToDomainAdd(), id)
+
+	if error != nil {
+		return controllers.NewErrorResponse(c, http.StatusInternalServerError, error)
+	}
+
+	return controllers.NewSuccesResponse(c, responses.FromDomain(donation))
+}
+
+func (donationController DonationController) DeleteDonation(c echo.Context) error {
+	fmt.Println("Delete")
+	ctx := c.Request().Context()
+	id, _ := strconv.Atoi(c.Param("id"))
+
+
+	err := donationController.DonationUseCase.DeleteDonation(ctx, id)
+
+	if err != nil {
+		return controllers.NewErrorResponse(c, http.StatusInternalServerError, err)
+	}
+
+	return controllers.NewSuccesResponse(c, nil)
 }
 

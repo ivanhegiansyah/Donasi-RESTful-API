@@ -14,6 +14,7 @@ type Domain struct {
 	Status          string
 	CreatedAt       time.Time
 	UpdatedAt       time.Time
+	
 }
 
 type Usecase interface {

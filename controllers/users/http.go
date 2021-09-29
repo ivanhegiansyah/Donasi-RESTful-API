@@ -1,7 +1,6 @@
 package users
 
 import (
-	"context"
 	"finalproject-BE/business/users"
 	"finalproject-BE/controllers"
 	"finalproject-BE/controllers/users/requests"
@@ -50,7 +49,7 @@ func (userController UserController) Register(c echo.Context) error {
 		return controllers.NewErrorResponse(c, http.StatusInternalServerError, error)
 	}
 
-	return controllers.NewSuccesResponse(c, responses.FromDomainRegister(user))
+	return controllers.NewSuccesResponse(c, responses.FromDomain(user))
 }
 
 func (userController UserController) GetAllUser(c echo.Context) error {
@@ -62,7 +61,7 @@ func (userController UserController) GetAllUser(c echo.Context) error {
 		return controllers.NewErrorResponse(c, http.StatusInternalServerError, error)
 	}
 
-	return controllers.NewSuccesResponse(c, user)
+	return controllers.NewSuccesResponse(c, responses.FromUserListDomain(user))
 }
 
 func (userController UserController) GetDetailUser(c echo.Context) error {
@@ -75,14 +74,37 @@ func (userController UserController) GetDetailUser(c echo.Context) error {
 		return controllers.NewErrorResponse(c, http.StatusInternalServerError, error)
 	}
 
-	return controllers.NewSuccesResponse(c, user)
+	return controllers.NewSuccesResponse(c, responses.FromDomainDetail(user))
 }
 
-func (userController *UserController) UserRole(id int) string {
-	role := "NewsAnchor"
-	user, err := userController.UserUseCase.GetDetailUser(context.Background(), id)
-	if err == nil {
-		role = user.Name
+func (userController UserController) UpdateUser(c echo.Context) error {
+	fmt.Println("Update")
+	ctx := c.Request().Context()
+	id, _ := strconv.Atoi(c.Param("id"))
+
+	userUpdate := requests.UserRegister{}
+	c.Bind(&userUpdate)
+
+	user, error := userController.UserUseCase.UpdateUser(ctx, userUpdate.ToDomainRegister(), id)
+
+	if error != nil {
+		return controllers.NewErrorResponse(c, http.StatusInternalServerError, error)
 	}
-	return role
+
+	return controllers.NewSuccesResponse(c, responses.FromDomain(user))
+}
+
+func (userController UserController) DeleteUser(c echo.Context) error {
+	fmt.Println("Delete")
+	ctx := c.Request().Context()
+	id, _ := strconv.Atoi(c.Param("id"))
+
+
+	err := userController.UserUseCase.DeleteUser(ctx, id)
+
+	if err != nil {
+		return controllers.NewErrorResponse(c, http.StatusInternalServerError, err)
+	}
+
+	return controllers.NewSuccesResponse(c, nil)
 }

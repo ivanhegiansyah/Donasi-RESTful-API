@@ -33,6 +33,8 @@ func (user *Users) ToDomain() users.Domain {
 		Dob:       user.Dob,
 		CreatedAt: user.CreatedAt,
 		UpdatedAt: user.UpdatedAt,
+		Transaction: user.Transaction,
+		Donation: user.Donation,
 	}
 }
 

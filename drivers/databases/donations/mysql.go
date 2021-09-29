@@ -2,7 +2,9 @@ package donations
 
 import (
 	"context"
+	"errors"
 	"finalproject-BE/business/donations"
+	donationdetails "finalproject-BE/drivers/databases/donationDetails"
 
 	"gorm.io/gorm"
 )
@@ -43,16 +45,54 @@ func (rep *MysqlDonationRepository) GetAllDonation(ctx context.Context) ([]donat
 	return ToListDomain(donation), nil
 }
 
-func (rep *MysqlDonationRepository) GetDetailDonation(ctx context.Context, id int) ([]donations.Domain, error) {
-	var donation []Donations
-
-	result := rep.Conn.First(&donation, id)
+func (rep *MysqlDonationRepository) GetDetailDonation(ctx context.Context, id int) (donations.Domain, error) {
+	var donation Donations
+	//sebelum find
+	result := rep.Conn.Preload("DonationDetails").First(&donation, id)
 	
 	
 
 	if result.Error != nil {
-		return []donations.Domain{}, result.Error
+		return donations.Domain{}, result.Error
 	}
 
-	return ToListDomain(donation), nil
+	return donation.ToDomain(), nil
+}
+
+func (rep *MysqlDonationRepository) UpdateDonation(ctx context.Context, domain donations.Domain) (donations.Domain, error) {
+	var donation Donations
+
+	donation = FromDomain(domain)
+
+	result := rep.Conn.Save(&donation)
+
+	if result.Error != nil {
+		return donations.Domain{}, result.Error
+	}
+
+	return donation.ToDomain(), nil
+
+}
+
+func (rep *MysqlDonationRepository) DeletDonation(ctx context.Context, id int) error {
+	var donation Donations
+	var donationdetails donationdetails.DonationDetails
+	var idx, idx2 int
+
+	rep.Conn.Raw("SELECT id FROM donations").Scan(&idx)
+
+	rep.Conn.Raw("SELECT id FROM donation_details  WHERE donation_id = ?", idx).Scan(&idx2)
+	rep.Conn.Delete(&donationdetails, idx2)
+	
+
+	result := rep.Conn.Delete(&donation, id)
+	
+	if result.Error != nil {
+		return result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return errors.New("id not found")
+	}
+	return nil
 }
