@@ -80,7 +80,7 @@ func (uc *DonationUsecase) UpdateDonation(ctx context.Context, domain Domain, id
 }
 
 func (uc *DonationUsecase) DeleteDonation(ctx context.Context, id int) error {
-	err := uc.Repo.DeletDonation(ctx, id)
+	err := uc.Repo.DeleteDonation(ctx, id)
 	if err != nil {
 		return err
 	}

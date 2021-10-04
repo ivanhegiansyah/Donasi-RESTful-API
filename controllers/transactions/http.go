@@ -44,6 +44,6 @@ func (transactionController TransactionController) GetAllTransaction(c echo.Cont
 		return controllers.NewErrorResponse(c, http.StatusInternalServerError, error)
 	}
 
-	return controllers.NewSuccesResponse(c, transaction)
+	return controllers.NewSuccesResponse(c, responses.FromListDomain(transaction))
 }
 

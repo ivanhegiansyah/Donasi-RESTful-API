@@ -34,5 +34,5 @@ type Repository interface {
 	GetAllDonation(ctx context.Context) ([]Domain, error)
 	GetDetailDonation(ctx context.Context, id int) (Domain, error)
 	UpdateDonation(ctx context.Context, domain Domain) (Domain, error)
-	DeletDonation(ctx context.Context, id int) error
+	DeleteDonation(ctx context.Context, id int) error
 }

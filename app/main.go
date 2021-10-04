@@ -27,6 +27,11 @@ import (
 	_transactionRepository "finalproject-BE/drivers/databases/transactions"
 	_transactiondb "finalproject-BE/drivers/databases/transactions"
 
+	_paymentMethodUsecase "finalproject-BE/business/paymentMethods"
+	_paymentMethodController "finalproject-BE/controllers/paymentMethods"
+	_paymentMethodRepository "finalproject-BE/drivers/databases/paymentMethods"
+	_paymentMethoddb "finalproject-BE/drivers/databases/paymentMethods"
+
 	_route "finalproject-BE/app/routes"
 	_middleware "finalproject-BE/app/middlewares"
 	_mysqlDriver "finalproject-BE/drivers/mysql"
@@ -55,6 +60,7 @@ func DbMigrate(db *gorm.DB) {
 	db.AutoMigrate(&_donationdetaildb.DonationDetails{})
 	db.AutoMigrate(&_donationtypedb.DonationTypes{})
 	db.AutoMigrate(&_donationdb.Donations{})
+	db.AutoMigrate(&_paymentMethoddb.PaymentMethods{})
 	db.AutoMigrate(&_transactiondb.Transactions{})
 
 }
@@ -100,6 +106,10 @@ func main() {
 	transactionUseCase := _transactionUsecase.NewTransactionUsecase(transactionRepository, timeoutContext)
 	transactionController := _transactionController.NewTransactionController(transactionUseCase)
 
+	paymentMethodRepository := _paymentMethodRepository.NewMysqlPaymentMethodRepository(Conn)
+	paymentMethodUseCase := _paymentMethodUsecase.NewPaymentMethodUsecase(paymentMethodRepository, timeoutContext)
+	paymentMethodController := _paymentMethodController.NewPaymentMethodController(paymentMethodUseCase)
+
 	routesInit := _route.ControllerList{
 		JWTMiddleware:      configJWT.Init(),
 		UserController:           *userController,
@@ -107,6 +117,7 @@ func main() {
 		DonationDetailController: *donationDetailController,
 		DonationTypeController:   *donationTypeController,
 		TransactionController: *transactionController,
+		PaymentMethodController: *paymentMethodController,
 	}
 
 	routesInit.RouteUser(e)
@@ -114,5 +125,6 @@ func main() {
 	routesInit.RouteDonationDetail(e)
 	routesInit.RouteDonationType(e)
 	routesInit.RouteTransaction(e)
+	routesInit.RoutePaymentMethod(e)
 	log.Fatal(e.Start(viper.GetString("server.address")))
 }

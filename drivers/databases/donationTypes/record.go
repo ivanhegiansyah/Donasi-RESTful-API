@@ -14,7 +14,7 @@ type DonationTypes struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt gorm.DeletedAt        `gorm:"index"`
-	Donation  []donations.Donations `gorm:"foreignKey:DonationTypeId;references:Id"`
+	Donations  []donations.Donations `gorm:"foreignKey:DonationTypeId;references:Id"`
 }
 
 func (donationType *DonationTypes) ToDomain() donationtypes.Domain {
@@ -23,6 +23,7 @@ func (donationType *DonationTypes) ToDomain() donationtypes.Domain {
 		Name:      donationType.Name,
 		CreatedAt: donationType.CreatedAt,
 		UpdatedAt: donationType.UpdatedAt,
+		Donations:  donationType.Donations,
 	}
 }
 
@@ -32,5 +33,14 @@ func FromDomain(domain donationtypes.Domain) DonationTypes {
 		Name:      domain.Name,
 		CreatedAt: domain.CreatedAt,
 		UpdatedAt: domain.UpdatedAt,
+		Donations:  domain.Donations,
 	}
+}
+
+func ToListDomain(data []DonationTypes) []donationtypes.Domain {
+	result := []donationtypes.Domain{}
+	for _, domain := range data {
+		result = append(result, domain.ToDomain())
+	}
+	return result
 }

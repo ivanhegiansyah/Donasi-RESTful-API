@@ -31,7 +31,7 @@ func (jwtConf *ConfigJWT) Init() middleware.JWTConfig {
 }
 
 // GenerateToken
-func (jwtConf *ConfigJWT) GenerateToken(userId int) string {
+func (jwtConf ConfigJWT) GenerateToken(userId int) string {
 	claims := JwtCustomClaims{
 		userId,
 		jwt.StandardClaims{

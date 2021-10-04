@@ -38,7 +38,6 @@ func (uc *UserUsecase) Login(ctx context.Context, domain Domain) (Domain, error)
 	user, err := uc.Repo.Login(ctx, domain)
 	temp := encrypt.ValidateHash(domain.Password, user.Password)
 
-
 	if temp != true {
 		return Domain{}, errors.New("Password salah")
 	}
@@ -85,7 +84,7 @@ func (uc *UserUsecase) Register(ctx context.Context, domain Domain) (Domain, err
 //core bisnis Read
 func (uc *UserUsecase) GetAllUser(ctx context.Context) ([]Domain, error) {
 	user, err := uc.Repo.GetAllUser(ctx)
-	
+
 	if err != nil {
 		return []Domain{}, err
 	}
@@ -118,8 +117,8 @@ func (uc *UserUsecase) UpdateUser(ctx context.Context, domain Domain, id int) (D
 	domain.Id = id
 
 	var err error
-	domain.Password, err = encrypt.Hash(domain.Password)
-	
+	// domain.Password, err = encrypt.Hash(domain.Password)
+
 	if err != nil {
 		return Domain{}, err
 	}

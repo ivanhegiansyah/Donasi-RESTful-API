@@ -28,3 +28,11 @@ func FromDomain(domain transactions.Domain) TransactionResponse {
 		UpdatedAt:       domain.UpdatedAt,
 	}
 }
+
+func FromListDomain(domain []transactions.Domain) []TransactionResponse {
+	var response []TransactionResponse
+	for _, value := range domain {
+		response = append(response, FromDomain(value))
+	}
+	return response
+}

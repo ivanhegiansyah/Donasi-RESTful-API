@@ -15,8 +15,12 @@ type Domain struct {
 
 type Usecase interface {
 	AddDonationDetail(ctx context.Context, domain Domain, id int) (Domain, error)
+	UpdateDonationDetail(ctx context.Context, domain Domain, id int) (Domain, error)
+	DeleteDonationDetail(ctx context.Context, id int) error
 }
 
 type Repository interface {
 	AddDonationDetail(ctx context.Context, domain Domain, id int) (Domain, error)
+	UpdateDonationDetail(ctx context.Context, domain Domain) (Domain, error)
+	DeleteDonationDetail(ctx context.Context, id int) error
 }

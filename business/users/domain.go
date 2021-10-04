@@ -7,15 +7,6 @@ import (
 	"time"
 )
 
-// type DetailDonate struct {
-// 	ID               int
-// 	DonationName     string
-// 	Status           string
-// 	ShortDescription string
-// 	GoalAmount       int
-// 	ExpiredDate      string
-// }
-
 type Domain struct {
 	Id        int
 	Name      string

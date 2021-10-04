@@ -5,6 +5,7 @@ import (
 	"errors"
 	"finalproject-BE/business/donations"
 	donationdetails "finalproject-BE/drivers/databases/donationDetails"
+	"fmt"
 
 	"gorm.io/gorm"
 )
@@ -74,15 +75,16 @@ func (rep *MysqlDonationRepository) UpdateDonation(ctx context.Context, domain d
 
 }
 
-func (rep *MysqlDonationRepository) DeletDonation(ctx context.Context, id int) error {
+func (rep *MysqlDonationRepository) DeleteDonation(ctx context.Context, id int) error {
 	var donation Donations
-	var donationdetails donationdetails.DonationDetails
-	var idx, idx2 int
+	// var donationdetails donationdetails.DonationDetails
+	// var idx, idx2 int
 
-	rep.Conn.Raw("SELECT id FROM donations").Scan(&idx)
+	// rep.Conn.Raw("SELECT id FROM donations").Scan(&idx)
 
-	rep.Conn.Raw("SELECT id FROM donation_details  WHERE donation_id = ?", idx).Scan(&idx2)
-	rep.Conn.Delete(&donationdetails, idx2)
+	// rep.Conn.Raw("SELECT id FROM donation_details  WHERE donation_id = ?", idx).Scan(&idx2)
+	// fmt.Println(idx2)
+	// rep.Conn.Delete(&donationdetails, idx2)
 	
 
 	result := rep.Conn.Delete(&donation, id)
@@ -95,4 +97,19 @@ func (rep *MysqlDonationRepository) DeletDonation(ctx context.Context, id int) e
 		return errors.New("id not found")
 	}
 	return nil
+}
+
+func (d *Donations) BeforeDelete(tx *gorm.DB) (err error) {
+	donationDetails := donationdetails.DonationDetails{}
+	var temp int
+
+	tx.Raw("SELECT donation_id FROM donation_details").Scan(&temp)
+
+	fmt.Println(temp)
+	fmt.Println(d.Id)
+	if d.Id == temp {
+		tx.Delete(&donationDetails, d.Id)
+	}
+
+	return
 }

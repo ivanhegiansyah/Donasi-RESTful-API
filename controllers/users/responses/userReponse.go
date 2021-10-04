@@ -7,7 +7,7 @@ import (
 )
 
 type UserDetailResponse struct {
-	UserResponses UserResponse
+	UserResponses UserResponse                `json:"userResponse"`
 	Transaction   []transactions.Transactions `json:"transaction"`
 	Donation      []donations.Donations       `json:"donation"`
 }
@@ -42,6 +42,7 @@ func FromDomain(domain users.Domain) UserResponse {
 		Dob:   domain.Dob,
 	}
 }
+
 func FromUserListDomain(domain []users.Domain) []UserResponse {
 	var response []UserResponse
 	for _, value := range domain {
