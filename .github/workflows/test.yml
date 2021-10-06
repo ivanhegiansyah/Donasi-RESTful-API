@@ -63,4 +63,3 @@ jobs:
           END
       - name: Connect EC2 & Remove All Container & Pull from Registry & Start
         run: ssh development 'docker rm -f $(docker ps -a -q) && docker pull ivanhegiansyah/donasi_rest:1.0.0 && docker run -d -p 8000:8000 --name donasi_rest ivanhegiansyah/donasi_rest:1.0.0'
-
