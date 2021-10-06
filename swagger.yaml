@@ -1,0 +1,661 @@
+openapi: "3.0.0"
+info:
+  title: "Donasi Rest"
+  description: "OpenAPI for Donasi Rest"
+  version: "1.0.0"
+  contact:
+    name: Mohamad Ivan Hegiansyah
+    email: hegiansyahivan016@gmail.com
+    url: https://github.com/ivanhegiansyah
+servers:
+
+  - description: ec2 server
+    url: http://3.17.28.69:8000/api/v1
+tags:
+- name: "users"
+  description: "Users resource"
+- name: "donations"
+  description: "Donations resource"
+- name: "donation types"
+  description: "Donation types resource"
+- name: "donation details"
+  description: "Donation details resource"
+- name: "payment methods"
+  description: "Donate transactions resource"
+- name: "transactions"
+  description: "Payment methods resource"
+- name: "news"
+  description: "News resource"
+
+paths:
+  /user/register:
+    post:
+      tags:
+        - users
+      summary: Create new user
+      requestBody:
+        $ref: '#/components/requestBodies/User'
+      responses:
+        "405":
+          description: Invalid input
+        "200":
+          description: Success
+      security:
+        - api_key: []
+  /user/login:
+    post:
+      tags:
+        - users
+      summary: Create new user
+      requestBody:
+        $ref: '#/components/requestBodies/UserLogin'
+      responses:
+        "405":
+          description: Invalid input
+        "200":
+          description: Success
+      security:
+        - api_key: []
+  /users:
+    get:
+      tags:
+        - users
+      summary: Get all users
+      parameters:
+        - name: limit
+          in: query
+          description: Limit users result
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "405":
+          description: Invalid input
+        "200":
+          description: Success
+      security:
+        - api_key: []
+  /users/{id}:
+    get:
+      tags:
+        - users
+      summary: Detail user
+      parameters:
+        - name: id
+          in: path
+          description: ID of user to return
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "405":
+          description: Invalid input
+        "200":
+          description: Success
+      security:
+        - api_key: []
+    put:
+      tags:
+        - users
+      summary: Update user data
+      parameters:
+        - name: id
+          in: path
+          description: ID of user to return
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        $ref: '#/components/requestBodies/User'
+      responses:
+        "405":
+          description: Invalid input
+        "200":
+          description: Success
+      security:
+        - api_key: []
+    delete:
+      tags:
+        - users
+      summary: Destroy user by id
+      parameters:
+        - name: id
+          in: path
+          description: ID of user to return
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "405":
+          description: Invalid input
+        "200":
+          description: Success
+      security:
+        - api_key: []
+  /donations/add-donation:
+     post:
+      tags:
+        - donations
+      summary: Create new fundraising
+      requestBody:
+        $ref: '#/components/requestBodies/Donation'
+      responses:
+        "405":
+          description: Invalid input
+        "200":
+          description: Success
+      security:
+        - api_key: []
+  /donations:
+    get:
+      tags:
+        - donations
+      summary: List all donations
+      parameters:
+        - name: limit
+          in: query
+          description: Limit users result
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "405":
+          description: Invalid input
+        "200":
+          description: Success
+      security:
+        - api_key: []
+  /donations/{id}:
+    get:
+      tags:
+        - donations
+      summary: Detail donation
+      parameters:
+        - name: id
+          in: path
+          description: ID of fundraising to return
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "405":
+          description: Invalid input
+        "200":
+          description: Success
+      security:
+        - api_key: []
+    put:
+      tags:
+        - donations
+      summary: Update donation data
+      parameters:
+        - name: id
+          in: path
+          description: ID of donation to return
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        $ref: '#/components/requestBodies/Donation'
+      responses:
+        "405":
+          description: Invalid input
+        "200":
+          description: Success
+      security:
+        - api_key: []
+    delete:
+      tags:
+        - donations
+      summary: Delete fundraising by id
+      parameters:
+        - name: id
+          in: path
+          description: ID of donation to return
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "405":
+          description: Invalid input
+        "200":
+          description: Success
+      security:
+        - api_key: []
+  /donations/add-type:
+    post:
+      tags:
+        - donation types
+      summary: Create new wishlists
+      requestBody:
+        $ref: '#/components/requestBodies/DonationType'
+      responses:
+        "405":
+          description: Invalid input
+        "200":
+          description: Success
+      security:
+        - api_key: []
+  /donations/type:
+    get:
+      tags:
+        - donation types
+      summary: List all donation types
+      parameters:
+        - name: limit
+          in: query
+          description: Limit users result
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "405":
+          description: Invalid input
+        "200":
+          description: Success
+      security:
+        - api_key: []
+  /donations/types/{id}:
+    get:
+      tags:
+        - donation types
+      summary: Detail donation types
+      parameters:
+        - name: id
+          in: path
+          description: ID of wishlist to return
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "405":
+          description: Invalid input
+        "200":
+          description: Success
+      security:
+        - api_key: []
+    put:
+      tags:
+        - donation types
+      summary: Update donation types
+      parameters:
+        - name: id
+          in: path
+          description: ID of wishlist to return
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        $ref: '#/components/requestBodies/DonationType'
+      responses:
+        "405":
+          description: Invalid input
+        "200":
+          description: Success
+      security:
+        - api_key: []
+    delete:
+      tags:
+        - donation types
+      summary: Delete  donation types by id
+      parameters:
+        - name: id
+          in: path
+          description: ID of donation to return
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "405":
+          description: Invalid input
+        "200":
+          description: Success
+      security:
+        - api_key: []
+  /donations/{id}/add-detail:
+    post:
+      tags:
+        - donation details
+      summary: Create new donation details
+      requestBody:
+        $ref: '#/components/requestBodies/DonationDetail'
+      responses:
+        "405":
+          description: Invalid input
+        "200":
+          description: Success
+      security:
+        - api_key: []
+  /donations/{id}/update-detail:
+     put:
+      tags:
+        - donation details
+      summary: Update donation details
+      requestBody:
+        $ref: '#/components/requestBodies/DonationDetail'
+      responses:
+        "405":
+          description: Invalid input
+        "200":
+          description: Success
+      security:
+        - api_key: []
+  /donations/{id}/delete-detail:
+   delete:
+      tags:
+        - donation details
+      summary: Delete  donation details by id
+      parameters:
+        - name: id
+          in: path
+          description: ID of donation to return
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "405":
+          description: Invalid input
+        "200":
+          description: Success
+      security:
+        - api_key: []
+  /transactions/add-transaction:
+     post:
+      tags:
+        - transactions
+      summary: Create new transactions
+      requestBody:
+        $ref: '#/components/requestBodies/Transaction'
+      responses:
+        "405":
+          description: Invalid input
+        "200":
+          description: Success
+      security:
+        - api_key: []
+  /transactions:
+    get:
+      tags:
+        - transactions
+      summary: List all transactions
+      parameters:
+        - name: limit
+          in: query
+          description: Limit transactions result
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "405":
+          description: Invalid input
+        "200":
+          description: Success
+      security:
+        - api_key: []
+  /transactions/add-payment:
+     post:
+      tags:
+        - payment methods
+      summary: Create new payment 
+      requestBody:
+        $ref: '#/components/requestBodies/Payment'
+      responses:
+        "405":
+          description: Invalid input
+        "200":
+          description: Success
+      security:
+        - api_key: []  
+  /transactions/payment-method:
+    get:
+      tags:
+        - payment methods
+      summary: List all payment methods
+      parameters:
+        - name: limit
+          in: query
+          description: Limit transactions result
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "405":
+          description: Invalid input
+        "200":
+          description: Success
+      security:
+        - api_key: []
+  /news:
+    get:
+      tags:
+        - news
+      summary: Get list news and coin code
+      parameters:
+        - name: category
+          in: query
+          description: Search list news by category
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: string
+      responses:
+        "405":
+          description: Invalid input
+        "200":
+          description: Success
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        phone:
+          type: string
+        dob:
+          type: string
+      xml:
+        name: User
+    UserLogin:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      xml:
+        name: UserLogin
+    DonationType:
+      type: object
+      properties:
+        name:
+          type: string
+      xml:
+        name: DonationType
+    Donation:
+      type: object
+      properties:
+        user_id:
+          type: integer
+          format: int32
+        donation_type_id:
+          type: integer
+          format: int32
+        donation_name:
+          type: string
+        status:
+          type: string
+        short_description:
+          type: string
+        goal_amount:
+          type: number
+          format: double
+        current_amount:
+          type: number
+          format: double
+        expired_date:
+          type: string
+      xml:
+        name: Donation
+    DonationDetail:
+      type: object
+      properties:
+        donation_id:
+          type: integer
+          format: int32
+        description:
+          type: string
+      xml:
+        name: DonationDetail
+    Transaction:
+      type: object
+      properties:
+        user_id:
+          type: integer
+          format: int32
+        payment_method_id:
+          type: integer
+          format: int32
+        donation_id:
+          type: integer
+          format: int32
+        total_donation:
+          type: number
+          format: double
+        status:
+          type: string
+      xml:
+        name: Transaction
+    Payment:
+      type: object
+      properties:
+        method_name:
+          type: string
+      xml:
+        name: Payment
+  requestBodies:
+    User:
+      description: ""
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/User'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/User'
+      required: true
+    UserLogin:
+      description: Pet object
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UserLogin'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/UserLogin'
+      required: true
+    DonationType:
+      description: DonationType object 
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/DonationType'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/DonationType'
+      required: true
+    Donation:
+      description: Donation object 
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Donation'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/Donation'
+    DonationDetail:
+      description: DonationDetail object 
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/DonationDetail'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/DonationDetail'
+      required: true
+    Transaction:
+      description: Transaction object 
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Transaction'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/Transaction'
+      required: true
+    Payment:
+      description: Payment object 
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Payment'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/Payment'
+      required: true
+  securitySchemes:
+    api_key:
+      type: apiKey
+      name: api_key
+      in: header
