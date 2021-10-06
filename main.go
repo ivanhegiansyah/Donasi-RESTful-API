@@ -1,7 +1,6 @@
 package main
 
 import (
-	
 	_userUsecase "finalproject-BE/business/users"
 	_userController "finalproject-BE/controllers/users"
 	_userRepository "finalproject-BE/drivers/databases/users"
@@ -32,13 +31,15 @@ import (
 	_paymentMethodRepository "finalproject-BE/drivers/databases/paymentMethods"
 	_paymentMethoddb "finalproject-BE/drivers/databases/paymentMethods"
 
-	_route "finalproject-BE/app/routes"
+	_newsController "finalproject-BE/controllers/news"
+	_newsRepo "finalproject-BE/drivers/databases/thirdparties/news"
+
 	_middleware "finalproject-BE/app/middlewares"
+	_route "finalproject-BE/app/routes"
 	_mysqlDriver "finalproject-BE/drivers/mysql"
 	"log"
 	"time"
 
-	
 	"github.com/labstack/echo/v4"
 	"github.com/spf13/viper"
 	"gorm.io/gorm"
@@ -87,7 +88,7 @@ func main() {
 	timeoutContext := time.Duration(viper.GetInt("context.timeout")) * time.Second
 
 	userRepository := _userRepository.NewMysqlUserRepository(Conn)
-	userUseCase := _userUsecase.NewUserUsecase(userRepository, timeoutContext,  &configJWT)
+	userUseCase := _userUsecase.NewUserUsecase(userRepository, timeoutContext, &configJWT)
 	userController := _userController.NewUserController(userUseCase)
 
 	donationRepository := _donationRepository.NewMysqlDonationRepository(Conn)
@@ -110,14 +111,18 @@ func main() {
 	paymentMethodUseCase := _paymentMethodUsecase.NewPaymentMethodUsecase(paymentMethodRepository, timeoutContext)
 	paymentMethodController := _paymentMethodController.NewPaymentMethodController(paymentMethodUseCase)
 
+	newsRepo := _newsRepo.NewNewsApi()
+	newsController := _newsController.NewNewsController(newsRepo)
+
 	routesInit := _route.ControllerList{
-		JWTMiddleware:      configJWT.Init(),
+		JWTMiddleware:            configJWT.Init(),
 		UserController:           *userController,
 		DonationController:       *donationController,
 		DonationDetailController: *donationDetailController,
 		DonationTypeController:   *donationTypeController,
-		TransactionController: *transactionController,
-		PaymentMethodController: *paymentMethodController,
+		TransactionController:    *transactionController,
+		PaymentMethodController:  *paymentMethodController,
+		NewsController:           *newsController,
 	}
 
 	routesInit.RouteUser(e)
@@ -126,5 +131,6 @@ func main() {
 	routesInit.RouteDonationType(e)
 	routesInit.RouteTransaction(e)
 	routesInit.RoutePaymentMethod(e)
+	routesInit.RouteNews(e)
 	log.Fatal(e.Start(viper.GetString("server.address")))
 }

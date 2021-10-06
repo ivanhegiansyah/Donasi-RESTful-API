@@ -66,7 +66,7 @@ func (rep *MysqlUserRepository) GetDetailUser(ctx context.Context, id int) (user
 	// var detail []users.DetailDonate
 	// result := rep.Conn.First(&user, id)
 	
-	result := rep.Conn.Preload("Transaction").Preload("Donation").Find(&user, id)
+	result := rep.Conn.Preload("Transaction").Preload("Donation").First(&user, id)
 	// result := rep.Conn.Preload("Donation", func(db *gorm.DB) *gorm.DB {
     //     return db.Select("Id", "UserId", "DonationName", "Status", "ShortDescription", "GoalAmount", "ExpiredDate")
     // }).Find(&user, id)
