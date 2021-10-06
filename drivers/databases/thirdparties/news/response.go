@@ -39,10 +39,14 @@ type Articles struct {
 
 func (resp *Response) ToDomain() news.Domain {
 	return news.Domain{
-		Name:        resp.Articles[0].Source.Name,
-		Author:      resp.Articles[0].Author,
-		Title:       resp.Articles[0].Title,
-		Description: resp.Articles[0].Description,
-		URL:         resp.Articles[0].URL,
+		Article: resp.Articles,
 	}
+}
+
+func ToListDomain(data []Response) []news.Domain {
+	result := []news.Domain{}
+	for _, domain := range data {
+		result = append(result, domain.ToDomain())
+	}
+	return result
 }

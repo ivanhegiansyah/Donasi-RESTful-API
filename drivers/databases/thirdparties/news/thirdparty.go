@@ -3,6 +3,7 @@ package news
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"finalproject-BE/business/news"
 	"net/http"
 )
@@ -17,8 +18,9 @@ func NewNewsApi() news.Repository {
 	}
 }
 
-func (new *NewsApi) GetByName(ctx context.Context, name string) (news.Domain, error) {
-	req, _ := http.NewRequest("GET","https://newsapi.org/v2/top-headlines?country=id&category=health&apiKey=5a507ea673d6400baa60f12cb228e35a", nil)
+func (new *NewsApi) GetByCategory(ctx context.Context, category string) (news.Domain, error) {
+	url := "https://newsapi.org/v2/top-headlines?country=id&category=" + category 
+	req, _ := http.NewRequest("GET", url, nil)
 	req.Header.Set("X-Api-Key", "5a507ea673d6400baa60f12cb228e35a")
 	resp, err := new.httpClient.Do(req)
 	
@@ -28,8 +30,8 @@ func (new *NewsApi) GetByName(ctx context.Context, name string) (news.Domain, er
 	
 	data := Response{}
 	err = json.NewDecoder(resp.Body).Decode(&data)
-	if err != nil {
-		return news.Domain{}, err
+	if data.TotalResults == 0 {
+		return news.Domain{}, errors.New("Category is not found")
 	}
 	return data.ToDomain(), err
 }

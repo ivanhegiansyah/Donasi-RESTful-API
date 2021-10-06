@@ -4,6 +4,7 @@ import (
 	donationdetails "finalproject-BE/controllers/donationDetails"
 	donationtypes "finalproject-BE/controllers/donationTypes"
 	"finalproject-BE/controllers/donations"
+	"finalproject-BE/controllers/news"
 	paymentmethods "finalproject-BE/controllers/paymentMethods"
 	"finalproject-BE/controllers/transactions"
 	"finalproject-BE/controllers/users"
@@ -20,6 +21,7 @@ type ControllerList struct {
 	DonationTypeController   donationtypes.DonationTypeController
 	TransactionController    transactions.TransactionController
 	PaymentMethodController  paymentmethods.PaymentMethodController
+	NewsController           news.NewsController
 }
 
 func (cl *ControllerList) RouteUser(e *echo.Echo) {
@@ -63,4 +65,8 @@ func (cl *ControllerList) RouteTransaction(e *echo.Echo) {
 func (cl *ControllerList) RoutePaymentMethod(e *echo.Echo) {
 	e.POST("/api/v1/transactions/add-payment", cl.PaymentMethodController.AddPaymentMethod, middleware.JWTWithConfig(cl.JWTMiddleware))
 	e.GET("/api/v1/transactions/payment-method", cl.PaymentMethodController.GetAllPaymentMethod, middleware.JWTWithConfig(cl.JWTMiddleware))
+}
+
+func (cl *ControllerList) RouteNews(e *echo.Echo) {
+	e.GET("/api/v1/news", cl.NewsController.GetByCategory)
 }
