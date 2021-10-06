@@ -3,10 +3,12 @@ name: Running Unit Test
 on:
   pull_request:
     branches:
-      - 'main'
+      - 'master'
+      - 'cicd'
   push: 
     branches:
-      - 'main'
+      - 'master'
+      - 'cicd'
 
 jobs:
   unit-test:
@@ -17,6 +19,47 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v2
       with:
-        go-version: 1.16
+        go-version: 1.17
     - name: running unit test
       run: go test ./... -cover
+
+  build-push-docker:
+    name: "Build docker and push to registry"
+    runs-on: ubuntu-latest
+    needs: unit-test
+    steps:
+    - uses: actions/checkout@v2
+    - name: build docker
+      run: docker build -t ivanhegiansyah/donasi_rest:1.0.0 .
+    - name: login registry docker hub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKER_HUB_USERNAME }}
+        password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+    - name: push image to registry docker hub
+      run: docker push ivanhegiansyah/donasi_rest:1.0.0
+  
+  deployment-ec2:
+    name: "Deploy to ec2"
+    runs-on: ubuntu-latest
+    needs: build-push-docker
+    steps:
+      - uses: actions/checkout@v2 
+      - name: configuration SSH
+        env:
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_KEY: ${{ secrets.SSH_KEY }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+        run: |
+          mkdir -p ~/.ssh/
+          echo "$SSH_KEY" > ~/.ssh/donasi.pem
+          chmod 400 ~/.ssh/donasi.pem
+          cat >>~/.ssh/config <<END
+          Host development
+            HostName $SSH_HOST
+            User $SSH_USER
+            IdentityFile ~/.ssh/donasi.pem
+            StrictHostKeyChecking=no
+          END
+      - name: Connect EC2 & Remove All Container & Pull from Registry & Start
+        run: ssh development 'docker rm -f $(docker ps -a -q) && docker pull ivanhegiansyah/donasi_rest:1.0.0 && docker run -d -p 8000:8000 --name donasi_rest ivanhegiansyah/donasi_rest:1.0.0'
