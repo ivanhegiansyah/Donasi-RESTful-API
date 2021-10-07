@@ -22,6 +22,7 @@ func NewUserUsecase(repo Repository, timeout time.Duration, jwtauth *middlewares
 	}
 }
 
+//core bisnis
 //core bisnis login
 func (uc *UserUsecase) Login(ctx context.Context, domain Domain) (Domain, error) {
 	ctx, cancel := context.WithTimeout(ctx, uc.contextTimeout)
